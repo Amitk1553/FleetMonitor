@@ -43,3 +43,15 @@ export async function sendHeartbeat(id, payload = {}) {
   }
   return res.json();
 }
+
+export async function deleteDevice(id) {
+  const res = await fetch(`${API_BASE}/devices/${id}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Failed to delete device');
+  }
+  return res.json();
+}
+

@@ -228,7 +228,7 @@ Response:
 
 ## Assumptions
 
-1. **Device names are not unique** — only UUIDs are unique identifiers.
+1. **Device names must be unique** — the backend enforces case-insensitive uniqueness and rejects purely numeric names.
 2. **Heartbeat payloads are flexible** — `status`, `cpu_usage`, and `signal_strength` are all optional.
 3. **No authentication** — this is an internal monitoring tool, not a public-facing API.
 4. **Single-server deployment** — no horizontal scaling or load balancing considered.
@@ -239,25 +239,23 @@ Response:
 
 ## Known Limitations
 
-1. **No device deletion** — once registered, devices cannot be removed via the API.
-2. **No heartbeat history** — only the most recent heartbeat is stored; no time-series data.
-3. **No pagination** — the device list endpoint returns all devices; may be slow with thousands.
-4. **Polling, not WebSocket** — the frontend polls every 5 seconds; not truly real-time.
-5. **No rate limiting** — the API has no rate limiting or request throttling.
-6. **No HTTPS** — runs over HTTP; would need a reverse proxy for TLS in production.
+1. **No heartbeat history** — only the most recent heartbeat is stored; no time-series data.
+2. **No pagination** — the device list endpoint returns all devices; may be slow with thousands.
+3. **Polling, not WebSocket** — the frontend polls every 5 seconds; not truly real-time.
+4. **No rate limiting** — the API has no rate limiting or request throttling.
+5. **No HTTPS** — runs over HTTP; would need a reverse proxy for TLS in production.
 
 ---
 
 ## What I Would Improve with One Additional Day
 
 1. **WebSocket support** — replace polling with Socket.IO for instant status updates on the dashboard.
-2. **Device deletion and bulk operations** — `DELETE /devices/{id}` and bulk register/delete.
-3. **Heartbeat history** — store heartbeat history with a configurable retention period and expose a `GET /devices/{id}/heartbeats` endpoint.
-4. **Pagination & filtering** — `GET /devices?status=ONLINE&page=1&limit=20` for large fleets.
-5. **Dashboard charts** — add CPU usage and signal strength sparklines per device.
-6. **Rate limiting** — add `express-rate-limit` to prevent heartbeat flooding.
-7. **E2E tests** — Cypress/Playwright tests for the frontend dashboard.
-8. **Health monitoring** — `/health` endpoint with MongoDB connectivity checks for Docker health checks.
+2. **Heartbeat history** — store heartbeat history with a configurable retention period and expose a `GET /devices/{id}/heartbeats` endpoint.
+3. **Pagination & filtering** — `GET /devices?status=ONLINE&page=1&limit=20` for large fleets.
+4. **Dashboard charts** — add CPU usage and signal strength sparklines per device.
+5. **Rate limiting** — add `express-rate-limit` to prevent heartbeat flooding.
+6. **E2E tests** — Cypress/Playwright tests for the frontend dashboard.
+7. **Health monitoring** — `/health` endpoint with MongoDB connectivity checks for Docker health checks.
 
 ---
 

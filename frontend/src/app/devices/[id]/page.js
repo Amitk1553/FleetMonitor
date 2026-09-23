@@ -102,9 +102,6 @@ export default function DeviceDetailPage({ params }) {
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28 }}>
         <div>
           <h1 className="page-title">{device.name}</h1>
-          <p className="page-subtitle" style={{ fontFamily: 'monospace', marginBottom: 0 }}>
-            {device.id}
-          </p>
         </div>
         <span className={`status-badge status-badge--${device.status.toLowerCase()}`}
           style={{ fontSize: '0.9rem', padding: '8px 20px' }}>
@@ -118,9 +115,6 @@ export default function DeviceDetailPage({ params }) {
       <div className="detail-card">
         <div className="detail-card__header">
           <div className="detail-card__title">Device Information</div>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            GET /devices/{id}
-          </span>
         </div>
         <div className="metric-grid">
           <div className="metric-item">
@@ -145,12 +139,6 @@ export default function DeviceDetailPage({ params }) {
               {device.last_heartbeat ? formatTime(device.last_heartbeat) : '—'}
             </div>
           </div>
-          <div className="metric-item" style={{ gridColumn: '1 / -1' }}>
-            <div className="metric-item__label">Device UUID</div>
-            <div className="metric-item__value metric-item__value--mono" style={{ fontSize: '0.8rem' }}>
-              {device.id}
-            </div>
-          </div>
         </div>
       </div>
 
@@ -158,7 +146,6 @@ export default function DeviceDetailPage({ params }) {
       <div className="detail-card">
         <div className="detail-card__header">
           <div>
-            <div className="detail-card__subtitle">POST /devices/{id}/heartbeat</div>
             <div className="detail-card__title">Send Heartbeat</div>
           </div>
           <div className="live-indicator">

@@ -88,7 +88,7 @@ export default function Dashboard() {
         </button>
       </div>
 
-      <DeviceList devices={devices} loading={loading} />
+      <DeviceList devices={devices} loading={loading} onDeleted={loadData} />
 
       {showRegister && (
         <RegisterDevice

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import RegisterDevice from '../../components/RegisterDevice';
-import { fetchDevices } from '../../lib/api';
+import { fetchDevices, deleteDevice } from '../../lib/api';
 
 const POLL_INTERVAL = 5000;
 
@@ -22,6 +22,7 @@ export default function DevicesPage() {
   const [showRegister, setShowRegister] = useState(false);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('ALL'); // ALL | ONLINE | OFFLINE
+  const [deletingId, setDeletingId] = useState(null);
 
   const loadDevices = useCallback(async () => {
     try {
@@ -40,6 +41,21 @@ export default function DevicesPage() {
     const interval = setInterval(loadDevices, POLL_INTERVAL);
     return () => clearInterval(interval);
   }, [loadDevices]);
+
+  const handleDelete = async (e, id) => {
+    e.preventDefault();
+    if (confirm('Are you sure you want to delete this device?')) {
+      setDeletingId(id);
+      try {
+        await deleteDevice(id);
+        loadDevices();
+      } catch (err) {
+        alert(err.message || 'Failed to delete device');
+      } finally {
+        setDeletingId(null);
+      }
+    }
+  };
 
   const filtered = filter === 'ALL'
     ? devices
@@ -117,7 +133,6 @@ export default function DevicesPage() {
               />
               <div>
                 <div className="device-table-row__name">{device.name}</div>
-                <div className="device-table-row__id">{device.id}</div>
               </div>
               <div className="device-table-row__hb">
                 ♥ {formatRelativeTime(device.last_heartbeat)}
@@ -126,6 +141,22 @@ export default function DevicesPage() {
                 <span className={`status-badge status-badge--${device.status.toLowerCase()}`}>
                   {device.status}
                 </span>
+                <button
+                  onClick={(e) => handleDelete(e, device.id)}
+                  disabled={deletingId === device.id}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--accent-red)',
+                    cursor: 'pointer',
+                    padding: '4px 8px',
+                    fontSize: '0.85rem',
+                    borderRadius: '4px',
+                  }}
+                  className="btn--ghost"
+                >
+                  {deletingId === device.id ? '...' : 'Delete'}
+                </button>
                 <span className="device-table-row__arrow">→</span>
               </div>
             </Link>

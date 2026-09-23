@@ -14,10 +14,10 @@ export default function NavBar() {
 
   return (
     <nav className="navbar">
-      <div className="navbar__brand">
+      <Link href="/" className="navbar__brand">
         <div className="navbar__icon">📡</div>
         <span className="navbar__title">Fleet Monitor</span>
-      </div>
+      </Link>
       <div className="navbar__links">
         {navLinks.map((link) => (
           <Link

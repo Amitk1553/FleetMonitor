@@ -9,7 +9,23 @@ exports.registerDevice = async (req, res, next) => {
       return res.status(400).json({ error: 'Device name is required' });
     }
 
-    const device = await Device.create({ name: name.trim() });
+    const trimmedName = name.trim();
+
+    // Check if the name is purely numeric
+    if (!isNaN(trimmedName)) {
+      return res.status(400).json({ error: 'Device name cannot be purely numeric' });
+    }
+
+    // Check for duplicate name (case-insensitive)
+    const existingDevice = await Device.findOne({ 
+      name: { $regex: new RegExp(`^${trimmedName}$`, 'i') } 
+    });
+    
+    if (existingDevice) {
+      return res.status(400).json({ error: 'A device with this name already exists' });
+    }
+
+    const device = await Device.create({ name: trimmedName });
     res.status(201).json(device.toAPIResponse());
   } catch (err) {
     next(err);
@@ -57,6 +73,19 @@ exports.receiveHeartbeat = async (req, res, next) => {
 
     await device.save();
     res.json({ message: 'Heartbeat received', device: device.toAPIResponse() });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// DELETE /devices/:id — Delete a device
+exports.deleteDevice = async (req, res, next) => {
+  try {
+    const device = await Device.findByIdAndDelete(req.params.id);
+    if (!device) {
+      return res.status(404).json({ error: 'Device not found' });
+    }
+    res.json({ message: 'Device deleted successfully' });
   } catch (err) {
     next(err);
   }

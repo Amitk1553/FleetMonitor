@@ -44,7 +44,7 @@ export default function SummaryPage() {
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32 }}>
         <div>
           <h1 className="page-title">Fleet Summary</h1>
-          <p className="page-subtitle">GET /summary — Live fleet health overview</p>
+          <p className="page-subtitle">Live fleet health overview</p>
         </div>
         <div className="live-indicator">
           <div className="live-indicator__dot" />

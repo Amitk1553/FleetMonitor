@@ -2,7 +2,7 @@
 
 import DeviceCard from './DeviceCard';
 
-export default function DeviceList({ devices, loading }) {
+export default function DeviceList({ devices, loading, onDeleted }) {
   if (loading) {
     return (
       <div className="device-list">
@@ -28,8 +28,9 @@ export default function DeviceList({ devices, loading }) {
   return (
     <div className="device-list">
       {devices.map((device) => (
-        <DeviceCard key={device.id} device={device} />
+        <DeviceCard key={device.id} device={device} onDeleted={onDeleted} />
       ))}
     </div>
   );
 }
+
