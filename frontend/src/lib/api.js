@@ -30,3 +30,16 @@ export async function registerDevice(name) {
   }
   return res.json();
 }
+
+export async function sendHeartbeat(id, payload = {}) {
+  const res = await fetch(`${API_BASE}/devices/${id}/heartbeat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status: 'OK', ...payload }),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Failed to send heartbeat');
+  }
+  return res.json();
+}

@@ -6,7 +6,7 @@ import DeviceList from '../components/DeviceList';
 import RegisterDevice from '../components/RegisterDevice';
 import { fetchDevices, fetchSummary } from '../lib/api';
 
-const POLL_INTERVAL = 5000; // 5 seconds
+const POLL_INTERVAL = 5000;
 
 export default function Dashboard() {
   const [devices, setDevices] = useState([]);
@@ -33,61 +33,47 @@ export default function Dashboard() {
     }
   }, []);
 
-  // Initial load + polling
   useEffect(() => {
     loadData();
     const interval = setInterval(loadData, POLL_INTERVAL);
     return () => clearInterval(interval);
   }, [loadData]);
 
-  const handleDeviceRegistered = () => {
-    loadData();
-  };
-
   return (
-    <div className="app-container">
-      {/* Header */}
-      <header className="app-header">
-        <div className="app-header__brand">
-          <div className="app-header__icon">📡</div>
+    <>
+      {/* Page heading */}
+      <div style={{ marginBottom: 32 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <h1 className="app-header__title">Fleet Monitor</h1>
-            <p className="app-header__subtitle">
-              Real-time device fleet monitoring dashboard
+            <h1 className="page-title">Dashboard</h1>
+            <p className="page-subtitle">
+              Real-time overview of your device fleet
             </p>
           </div>
-        </div>
-
-        <div className="app-header__actions">
-          <div className="live-indicator">
-            <div className="live-indicator__dot" />
-            <span>
-              Live{' '}
-              {lastUpdated &&
-                `· ${lastUpdated.toLocaleTimeString()}`}
-            </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div className="live-indicator">
+              <div className="live-indicator__dot" />
+              <span>Live {lastUpdated && `· ${lastUpdated.toLocaleTimeString()}`}</span>
+            </div>
+            <button
+              className="btn btn--primary"
+              onClick={() => setShowRegister(true)}
+              id="register-device-btn"
+            >
+              + Add Device
+            </button>
           </div>
-          <button
-            className="btn btn--primary"
-            onClick={() => setShowRegister(true)}
-            id="register-device-btn"
-          >
-            + Add Device
-          </button>
         </div>
-      </header>
+      </div>
 
-      {/* Error Banner */}
       {error && (
         <div className="alert alert--error" style={{ marginBottom: 24 }}>
           {error}
         </div>
       )}
 
-      {/* Fleet Summary Cards */}
       <FleetSummary summary={summary} loading={loading} />
 
-      {/* Device List Section */}
       <div className="section-header">
         <h2 className="section-header__title">
           Registered Devices
@@ -97,24 +83,19 @@ export default function Dashboard() {
             </span>
           )}
         </h2>
-        <button
-          className="btn btn--ghost btn--sm"
-          onClick={loadData}
-          id="refresh-btn"
-        >
+        <button className="btn btn--ghost btn--sm" onClick={loadData} id="refresh-btn">
           ↻ Refresh
         </button>
       </div>
 
       <DeviceList devices={devices} loading={loading} />
 
-      {/* Register Modal */}
       {showRegister && (
         <RegisterDevice
-          onRegistered={handleDeviceRegistered}
+          onRegistered={loadData}
           onClose={() => setShowRegister(false)}
         />
       )}
-    </div>
+    </>
   );
 }

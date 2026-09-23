@@ -1,4 +1,5 @@
 import "./globals.css";
+import NavBar from "../components/NavBar";
 
 export const metadata = {
   title: "Fleet Monitor — Device Fleet Dashboard",
@@ -9,7 +10,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <div className="page-wrapper">
+          <NavBar />
+          <main className="page-content">{children}</main>
+        </div>
+      </body>
     </html>
   );
 }
+

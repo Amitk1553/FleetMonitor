@@ -1,0 +1,9 @@
+# Dev override — runs only MongoDB locally for development
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up mongodb
+services:
+  mongodb:
+    ports:
+      - "27017:27017"
+    # No auth in local dev for simplicity
+    environment:
+      - MONGO_INITDB_DATABASE=fleet-monitor

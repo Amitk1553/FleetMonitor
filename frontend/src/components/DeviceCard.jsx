@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 export default function DeviceCard({ device }) {
   const isOnline = device.status === 'ONLINE';
   const statusClass = isOnline ? 'online' : 'offline';
@@ -18,7 +20,7 @@ export default function DeviceCard({ device }) {
   };
 
   return (
-    <div className="device-card">
+    <Link href={`/devices/${device.id}`} className="device-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
       <div className={`device-card__indicator device-card__indicator--${statusClass}`} />
 
       <div className="device-card__info">
@@ -34,7 +36,9 @@ export default function DeviceCard({ device }) {
         <span className={`status-badge status-badge--${statusClass}`}>
           {device.status}
         </span>
+        <span style={{ color: 'var(--text-muted)', fontSize: '1rem', transition: 'transform 150ms ease' }}>→</span>
       </div>
-    </div>
+    </Link>
   );
 }
+
