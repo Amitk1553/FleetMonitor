@@ -139,6 +139,18 @@ export default function DeviceDetailPage({ params }) {
               {device.last_heartbeat ? formatTime(device.last_heartbeat) : '—'}
             </div>
           </div>
+          <div className="metric-item">
+            <div className="metric-item__label">CPU Usage</div>
+            <div className="metric-item__value">
+              {device.cpu_usage != null ? `${device.cpu_usage}%` : '—'}
+            </div>
+          </div>
+          <div className="metric-item">
+            <div className="metric-item__label">Signal Strength</div>
+            <div className="metric-item__value">
+              {device.signal_strength != null ? `${device.signal_strength} dBm` : '—'}
+            </div>
+          </div>
         </div>
       </div>
 

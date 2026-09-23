@@ -50,6 +50,9 @@ deviceSchema.methods.toAPIResponse = function () {
     id: this._id,
     name: this.name,
     status: this.status,
+    reported_status: this.reportedStatus,
+    cpu_usage: this.cpuUsage,
+    signal_strength: this.signalStrength,
     last_heartbeat: this.lastHeartbeat
       ? this.lastHeartbeat.toISOString()
       : null,

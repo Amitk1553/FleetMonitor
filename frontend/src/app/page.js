@@ -33,6 +33,15 @@ export default function Dashboard() {
     }
   }, []);
 
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await loadData();
+    // small artificial delay for better visual feedback if the request is extremely fast locally
+    setTimeout(() => setIsRefreshing(false), 300);
+  };
+
   useEffect(() => {
     loadData();
     const interval = setInterval(loadData, POLL_INTERVAL);
@@ -83,8 +92,17 @@ export default function Dashboard() {
             </span>
           )}
         </h2>
-        <button className="btn btn--ghost btn--sm" onClick={loadData} id="refresh-btn">
-          ↻ Refresh
+        <button 
+          className="btn btn--ghost btn--sm" 
+          onClick={handleRefresh} 
+          disabled={isRefreshing}
+          id="refresh-btn"
+        >
+          <span style={{ 
+            display: 'inline-block', 
+            transition: 'transform 0.3s ease',
+            transform: isRefreshing ? 'rotate(180deg)' : 'rotate(0deg)'
+          }}>↻</span> {isRefreshing ? 'Refreshing...' : 'Refresh'}
         </button>
       </div>
 

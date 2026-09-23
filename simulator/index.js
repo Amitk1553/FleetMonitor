@@ -144,20 +144,37 @@ async function main() {
   console.log(`  Interval   : ${HEARTBEAT_INTERVAL / 1000}s`);
   console.log('  ============================================\n');
 
-  // Register all devices
-  console.log('  Registering devices...\n');
+  // Fetch existing devices to handle duplicates gracefully
+  let existingDevices = [];
+  try {
+    const res = await apiRequest('GET', '/devices');
+    if (res.status === 200) existingDevices = res.body;
+  } catch (err) {
+    console.error(`  \u274C Could not reach API server at ${API_BASE}`);
+    process.exit(1);
+  }
+
+  // Register or reuse devices
+  console.log('  Registering/connecting devices...\n');
   for (const name of DEVICE_NAMES) {
     try {
-      const device = await registerDevice(name);
-      registeredDevices.push({ id: device.id, name: device.name });
-      console.log(`  \u2705 Registered: ${device.name} (ID: ${device.id})`);
+      // Check if it already exists from a previous run
+      const existing = existingDevices.find(d => d.name.toLowerCase() === name.toLowerCase());
+      if (existing) {
+        registeredDevices.push({ id: existing.id, name: existing.name });
+        console.log(`  \u2705 Reconnected: ${existing.name} (ID: ${existing.id})`);
+      } else {
+        const device = await registerDevice(name);
+        registeredDevices.push({ id: device.id, name: device.name });
+        console.log(`  \u2705 Registered : ${device.name} (ID: ${device.id})`);
+      }
     } catch (err) {
-      console.error(`  \u274C Failed to register "${name}": ${err.message}`);
+      console.error(`  \u274C Failed to register/connect "${name}": ${err.message}`);
     }
   }
 
   if (registeredDevices.length === 0) {
-    console.error('\n  No devices registered. Is the API server running?');
+    console.error('\n  No devices registered or connected. Is the API server running?');
     console.error(`  Tried: ${API_BASE}`);
     process.exit(1);
   }
