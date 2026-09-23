@@ -1,6 +1,12 @@
 # Dependencies
 node_modules/
 
+# Environment — never commit secrets
+.env
+.env.local
+.env.production
+.env*.local
+
 # Build
 .next/
 out/

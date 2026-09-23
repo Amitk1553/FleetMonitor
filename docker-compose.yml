@@ -1,7 +1,10 @@
 services:
+
+  # ─── MongoDB ────────────────────────────────────────────────────────────────
   mongodb:
     image: mongo:7
     container_name: fleet-monitor-db
+    restart: unless-stopped
     ports:
       - "27017:27017"
     volumes:
@@ -13,45 +16,60 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 10s
+      start_period: 15s
 
+  # ─── Backend API ─────────────────────────────────────────────────────────────
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: fleet-monitor-api
+    restart: unless-stopped
     ports:
       - "5000:5000"
     environment:
       - NODE_ENV=production
       - PORT=5000
+      # Connects to the mongodb service by its Docker service name
       - MONGO_URI=mongodb://mongodb:27017/fleet-monitor
     depends_on:
       mongodb:
         condition: service_healthy
     networks:
       - fleet-network
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5000/summary"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
+  # ─── Frontend (Next.js) ──────────────────────────────────────────────────────
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
+        # NEXT_PUBLIC_API_URL is baked into the JS bundle at build time.
+        # This must be the URL the USER'S BROWSER can reach — i.e. the host machine.
+        # Change this if deploying to a server (e.g. http://api.yourdomain.com)
         - NEXT_PUBLIC_API_URL=http://localhost:5000
     container_name: fleet-monitor-ui
+    restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - fleet-network
-    restart: unless-stopped
 
+# ─── Volumes & Networks ───────────────────────────────────────────────────────
 volumes:
   mongo-data:
+    driver: local
 
 networks:
   fleet-network:
