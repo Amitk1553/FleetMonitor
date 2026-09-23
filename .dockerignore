@@ -1,0 +1,8 @@
+# Root-level .dockerignore — excludes non-essential files from all build contexts
+.git
+.gitignore
+*.md
+.env
+.env.*
+docker-compose.dev.yml
+simulator/
